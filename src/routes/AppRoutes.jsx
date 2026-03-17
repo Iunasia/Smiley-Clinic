@@ -2,19 +2,16 @@ import { Routes, Route } from 'react-router-dom'
 import PrivateRoute from './PrivateRoute'
 import AdminRoute from './AdminRoute'
 
-// Shared pages
+import Home from '../pages/user/Home'
 import Login from '../pages/Login'
 import Register from '../pages/Register'
 import NotFound from '../pages/NotFound'
 
-// User pages
 import UserDashboard from '../pages/user/Dashboard'
-import Home from '../pages/user/Home'
 import Book from '../pages/user/Book'
 import MyBookings from '../pages/user/MyBookings'
 import Profile from '../pages/user/Profile'
 
-// Admin pages
 import AdminDashboard from '../pages/admin/Dashboard'
 import Users from '../pages/admin/Users'
 import UserDetail from '../pages/admin/UserDetail'
@@ -26,6 +23,7 @@ import Reports from '../pages/admin/Reports'
 export default function AppRoutes() {
   return (
     <Routes>
+
       {/* Public */}
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
@@ -51,6 +49,7 @@ export default function AppRoutes() {
       </Route>
 
       <Route path="*" element={<NotFound />} />
+
     </Routes>
   )
 }

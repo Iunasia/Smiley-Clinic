@@ -32,17 +32,43 @@ const services = [
 export default function Home() {
   const navigate = useNavigate()
   const [active, setActive] = useState('home')
+  const [menuOpen, setMenuOpen] = useState(false)
 
   const scrollToSection = (id) => {
     const section = document.getElementById(id)
     if (section) {
       section.scrollIntoView({ behavior: 'smooth' })
       setActive(id)
+      setMenuOpen(false)
     }
   }
 
+
   return (
     <div className="home">
+      <div
+      className={`drawer-overlay ${menuOpen ? 'overlay-show' : ''}`}
+      onClick={() => setMenuOpen(false)}
+    />
+      <div className={`drawer ${menuOpen ? 'drawer-open' : ''}`}>
+      <ul className="drawer-links">
+        <button className="drawer-btn" onClick={() => { scrollToSection('home');}}>
+          Home
+        </button>
+        <button className="drawer-btn" onClick={() => { scrollToSection('specialists'); }}>
+          About Us
+        </button>
+        <button className="drawer-btn" onClick={() => { scrollToSection('contact');  }}>
+          Contact Us
+        </button>
+        <button className="drawer-btn" onClick={() => { navigate('/appointment');  }}>
+          Book Appointment
+        </button>
+        <button className="drawer-btn" onClick={() => { navigate('/login'); }}>
+          Sign In
+        </button>
+      </ul>
+    </div>
 
       {/* NAVBAR */}
       <nav className="navbar">
@@ -84,8 +110,12 @@ export default function Home() {
             <button className="btn-signin" onClick={() => navigate('/login')}>
               Sign In
             </button>
+          
           </li>
         </ul>
+          <button className="manu" onClick={() => setMenuOpen(!menuOpen)}>
+          ≡
+        </button>
       </nav>
 
       {/* HERO */}
@@ -99,7 +129,7 @@ export default function Home() {
             Comprehensive dental and orthodontic care for the whole family. From routine checkups to advanced cosmetic treatments — we've got your smile covered.
           </p>
         </div>
-        <div className="hero-image">
+        <div className="hero-image" >
           <img src={heroImage} alt="Hero" />
         </div>
       </section>

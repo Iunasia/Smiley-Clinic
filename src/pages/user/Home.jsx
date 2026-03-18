@@ -15,9 +15,9 @@ import service6 from '../../assets/images/service6.jpg'
 import mapBg from '../../assets/images/map.jpg'
 
 const specialists = [
-  { name: 'Dr. Jean Rill', title: 'Orthodontist', exp: '12+ years specializing in braces and aligner therapy for all ages.', image: doctor1 },
-  { name: 'Dr. Yoo Rii', title: 'Orthodontist', exp: '12+ years specializing in braces and aligner therapy for all ages.', image: doctor2 },
-  { name: 'Dr. Yeon Rill', title: 'Orthodontist', exp: '12+ years specializing in braces and aligner therapy for all ages.', image: doctor3 },
+  { id:1, name: 'Dr. Jean Rill', title: 'Orthodontist', exp: '12+ years specializing in braces and aligner therapy for all ages.', image: doctor1 },
+  { id:2, name: 'Dr. Yoo Rii', title: 'Orthodontist', exp: '12+ years specializing in braces and aligner therapy for all ages.', image: doctor2 },
+  { id:3, name: 'Dr. Yeon Rill', title: 'Orthodontist', exp: '12+ years specializing in braces and aligner therapy for all ages.', image: doctor3 },
 ]
 
 const services = [
@@ -145,7 +145,9 @@ export default function Home() {
               <h3 className="card-name">{s.name}</h3>
               <p className="card-title">{s.title}</p>
               <p className="card-desc">{s.exp}</p>
-              <button className="btn-view">View</button>
+              <button className="btn-view" onClick={() => navigate(`/doctor/${s.id}`)}>
+  View
+</button>
             </div>
           ))}
         </div>

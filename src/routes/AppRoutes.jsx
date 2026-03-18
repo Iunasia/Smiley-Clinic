@@ -1,6 +1,8 @@
 import { Routes, Route } from 'react-router-dom'
 import PrivateRoute from './PrivateRoute'
 import AdminRoute from './AdminRoute'
+import DoctorInfo from '../pages/user/DoctorInfo'
+
 
 import Home from '../pages/user/Home'
 import Login from '../pages/Login'
@@ -22,12 +24,14 @@ import Reports from '../pages/admin/Reports'
 
 export default function AppRoutes() {
   return (
+    
     <Routes>
 
       {/* Public */}
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/doctor/:id" element={<DoctorInfo />} />
 
       {/* User routes */}
       <Route element={<PrivateRoute />}>

@@ -15,6 +15,7 @@ export function AuthProvider({ children }) {
   const logout = () => {
     setUser(null)
     localStorage.removeItem('currentUser')
+    localStorage.removeItem('token')
   }
 
   const isAdmin = user?.role === 'admin'

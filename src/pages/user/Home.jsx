@@ -61,7 +61,7 @@ export default function Home() {
         <button className="drawer-btn" onClick={() => { scrollToSection('contact');  }}>
           Contact Us
         </button>
-        <button className="drawer-btn" onClick={() => { navigate('/appointment');  }}>
+        <button className="drawer-btn" onClick={() => { navigate('/book');  }}>
           Book Appointment
         </button>
         <button className="drawer-btn" onClick={() => { navigate('/login'); }}>
@@ -102,10 +102,11 @@ export default function Home() {
             </button>
           </li>
           <li>
-            <button className="btn-book" onClick={() => navigate('/appointment')}>
+            <button className="btn-book" onClick={() => navigate('/book')}>
               Book Appointment
             </button>
           </li>
+          
           <li>
             <button className="btn-signin" onClick={() => navigate('/login')}>
               Sign In

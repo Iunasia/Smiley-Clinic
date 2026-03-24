@@ -15,9 +15,9 @@ import service6 from '../../assets/images/service6.jpg'
 import mapBg from '../../assets/images/map.jpg'
 
 const specialists = [
-  { name: 'Dr. Jean Rill', title: 'Orthodontist', exp: '12+ years specializing in braces and aligner therapy for all ages.', image: doctor1 },
-  { name: 'Dr. Yoo Rii', title: 'Orthodontist', exp: '12+ years specializing in braces and aligner therapy for all ages.', image: doctor2 },
-  { name: 'Dr. Yeon Rill', title: 'Orthodontist', exp: '12+ years specializing in braces and aligner therapy for all ages.', image: doctor3 },
+  { id:1, name: 'Dr. Jean Rill', title: 'Orthodontist', exp: '12+ years specializing in braces and aligner therapy for all ages.', image: doctor1 },
+  { id:2, name: 'Dr. Yoo Rii', title: 'Orthodontist', exp: '12+ years specializing in braces and aligner therapy for all ages.', image: doctor2 },
+  { id:3, name: 'Dr. Yeon Rill', title: 'Orthodontist', exp: '12+ years specializing in braces and aligner therapy for all ages.', image: doctor3 },
 ]
 
 const services = [
@@ -32,17 +32,43 @@ const services = [
 export default function Home() {
   const navigate = useNavigate()
   const [active, setActive] = useState('home')
+  const [menuOpen, setMenuOpen] = useState(false)
 
   const scrollToSection = (id) => {
     const section = document.getElementById(id)
     if (section) {
       section.scrollIntoView({ behavior: 'smooth' })
       setActive(id)
+      setMenuOpen(false)
     }
   }
 
+
   return (
     <div className="home">
+      <div
+      className={`drawer-overlay ${menuOpen ? 'overlay-show' : ''}`}
+      onClick={() => setMenuOpen(false)}
+    />
+      <div className={`drawer ${menuOpen ? 'drawer-open' : ''}`}>
+      <ul className="drawer-links">
+        <button className="drawer-btn" onClick={() => { scrollToSection('home');}}>
+          Home
+        </button>
+        <button className="drawer-btn" onClick={() => { scrollToSection('specialists'); }}>
+          About Us
+        </button>
+        <button className="drawer-btn" onClick={() => { scrollToSection('contact');  }}>
+          Contact Us
+        </button>
+        <button className="drawer-btn" onClick={() => { navigate('/book');  }}>
+          Book Appointment
+        </button>
+        <button className="drawer-btn" onClick={() => { navigate('/login'); }}>
+          Sign In
+        </button>
+      </ul>
+    </div>
 
       {/* NAVBAR */}
       <nav className="navbar">
@@ -76,16 +102,21 @@ export default function Home() {
             </button>
           </li>
           <li>
-            <button className="btn-book" onClick={() => navigate('/appointment')}>
+            <button className="btn-book" onClick={() => navigate('/book')}>
               Book Appointment
             </button>
           </li>
+          
           <li>
             <button className="btn-signin" onClick={() => navigate('/login')}>
               Sign In
             </button>
+          
           </li>
         </ul>
+          <button className="manu" onClick={() => setMenuOpen(!menuOpen)}>
+          ≡
+        </button>
       </nav>
 
       {/* HERO */}
@@ -99,7 +130,7 @@ export default function Home() {
             Comprehensive dental and orthodontic care for the whole family. From routine checkups to advanced cosmetic treatments — we've got your smile covered.
           </p>
         </div>
-        <div className="hero-image">
+        <div className="hero-image" >
           <img src={heroImage} alt="Hero" />
         </div>
       </section>
@@ -115,7 +146,9 @@ export default function Home() {
               <h3 className="card-name">{s.name}</h3>
               <p className="card-title">{s.title}</p>
               <p className="card-desc">{s.exp}</p>
-              <button className="btn-view">View</button>
+              <button className="btn-view" onClick={() => navigate(`/doctor/${s.id}`)}>
+  View
+</button>
             </div>
           ))}
         </div>

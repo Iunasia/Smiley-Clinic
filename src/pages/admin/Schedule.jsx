@@ -8,19 +8,18 @@ const TIME_SLOTS = [
   '03:00 PM','03:30 PM','04:00 PM','04:30 PM',
   '05:00 PM','05:30 PM',
 ]
-
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
 
 export default function Schedule() {
   const navigate = useNavigate()
-  const [dentists, setDentists]     = useState([])
-  const [selected, setSelected]     = useState(null)
-  const [slots, setSlots]           = useState([])
-  const [bookings, setBookings]     = useState([])
-  const [activeTab, setActiveTab]   = useState('weekly')
-  const [form, setForm]             = useState({ date: '', time: '' })
+  const [dentists, setDentists]       = useState([])
+  const [selected, setSelected]       = useState(null)
+  const [slots, setSlots]             = useState([])
+  const [bookings, setBookings]       = useState([])
+  const [activeTab, setActiveTab]     = useState('weekly')
+  const [form, setForm]               = useState({ date: '', time: '' })
   const [currentWeek, setCurrentWeek] = useState(new Date())
-  const [successMsg, setSuccessMsg] = useState('')
+  const [successMsg, setSuccessMsg]   = useState('')
 
   useEffect(() => {
     const dents = JSON.parse(localStorage.getItem('dentists') || '[]')
@@ -34,7 +33,6 @@ export default function Schedule() {
 
   const today = new Date().toISOString().split('T')[0]
 
-  // Get week dates
   const getWeekDates = (date) => {
     const d = new Date(date)
     const day = d.getDay()
@@ -61,13 +59,17 @@ export default function Schedule() {
     setCurrentWeek(d)
   }
 
-  const dentistSlots   = slots.filter(s => s.dentistId === selected?.id)
+  const dentistSlots    = slots.filter(s => s.dentistId === selected?.id)
   const dentistBookings = bookings.filter(b => b.dentistId === selected?.id)
 
   const addSlot = () => {
-    if (!form.date || !form.time || !selected) return
+    if (!form.date || !form.time) return
     const exists = slots.find(s => s.dentistId === selected.id && s.date === form.date && s.time === form.time)
-    if (exists) { setSuccessMsg('This slot already exists!'); setTimeout(() => setSuccessMsg(''), 2000); return }
+    if (exists) {
+      setSuccessMsg('This slot already exists!')
+      setTimeout(() => setSuccessMsg(''), 2000)
+      return
+    }
     const newSlot = { id: Date.now(), dentistId: selected.id, dentistName: selected.name, date: form.date, time: form.time }
     const updated = [...slots, newSlot]
     localStorage.setItem('slots', JSON.stringify(updated))
@@ -191,10 +193,10 @@ export default function Schedule() {
               <div style={{ marginTop: 20, padding: '14px', background: '#f8f9fc', borderRadius: 10 }}>
                 <p style={{ fontSize: 11, fontWeight: 600, color: '#8a9fc4', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 10 }}>Stats</p>
                 {[
-                  { label: 'Total Slots',  num: dentistSlots.length,                                       color: '#0d1b3e' },
-                  { label: 'Booked',       num: dentistBookings.filter(b => b.status !== 'cancelled').length, color: '#4ecdc4' },
-                  { label: 'Pending',      num: dentistBookings.filter(b => b.status === 'pending').length,   color: '#f5c842' },
-                  { label: 'Available',    num: Math.max(0, dentistSlots.length - dentistBookings.filter(b => b.status !== 'cancelled').length), color: '#7c3aed' },
+                  { label: 'Total Slots', num: dentistSlots.length, color: '#0d1b3e' },
+                  { label: 'Booked',      num: dentistBookings.filter(b => b.status !== 'cancelled').length, color: '#4ecdc4' },
+                  { label: 'Pending',     num: dentistBookings.filter(b => b.status === 'pending').length,   color: '#f5c842' },
+                  { label: 'Available',   num: Math.max(0, dentistSlots.length - dentistBookings.filter(b => b.status !== 'cancelled').length), color: '#7c3aed' },
                 ].map(s => (
                   <div key={s.label} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                     <span style={{ fontSize: 12, color: '#8a9fc4' }}>{s.label}</span>
@@ -207,7 +209,6 @@ export default function Schedule() {
 
           {/* ── RIGHT — Schedule Panel ── */}
           <div style={{ overflow: 'auto', padding: 24 }}>
-
             {!selected ? (
               <div style={{ textAlign: 'center', padding: '80px 20px', color: '#8a9fc4' }}>
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#e0e4ea" strokeWidth="1.5" style={{ marginBottom: 16 }}>
@@ -223,7 +224,6 @@ export default function Schedule() {
                     <h2 style={{ fontSize: 20, fontWeight: 700, color: '#0d1b3e', marginBottom: 4 }}>{selected.name}</h2>
                     <p style={{ fontSize: 13, color: '#8a9fc4' }}>{selected.title} · Manage availability and time slots</p>
                   </div>
-
                   {/* Tabs */}
                   <div style={{ display: 'flex', background: '#f0f2f5', borderRadius: 10, padding: 4, gap: 4 }}>
                     {['weekly', 'slots', 'bookings'].map(tab => (
@@ -399,7 +399,7 @@ export default function Schedule() {
                         </div>
                       ) : (
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 10 }}>
-                          {dentistSlots.sort((a,b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time)).map(s => {
+                          {dentistSlots.sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time)).map(s => {
                             const booked = isBooked(s.date, s.time)
                             const booking = dentistBookings.find(b => b.date === s.date && b.time === s.time && b.status !== 'cancelled')
                             return (
@@ -454,7 +454,7 @@ export default function Schedule() {
                           </tr>
                         </thead>
                         <tbody>
-                          {dentistBookings.sort((a,b) => a.date.localeCompare(b.date)).map(b => (
+                          {dentistBookings.sort((a, b) => a.date.localeCompare(b.date)).map(b => (
                             <tr key={b.id} style={{ borderBottom: '1px solid #f0f2f5' }}>
                               <td style={{ padding: '12px 16px' }}>
                                 <p style={{ fontSize: 13, fontWeight: 600, color: '#0d1b3e', marginBottom: 1 }}>{b.userName}</p>
@@ -500,7 +500,6 @@ export default function Schedule() {
                     )}
                   </div>
                 )}
-
               </>
             )}
           </div>

@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './Login.css'
-
+import { useAuth } from '../context/AuthContext'
 export default function Login() {
   const navigate = useNavigate()
   const [tab, setTab] = useState('signin')
-
+  const { login } = useAuth()
   const [loginForm, setLoginForm] = useState({ email: '', password: '' })
   const [loginError, setLoginError] = useState('')
   const [loginLoading, setLoginLoading] = useState(false)
@@ -31,10 +31,10 @@ export default function Login() {
     setTimeout(() => {
       setLoginLoading(false)
       if (isAdmin) {
-        localStorage.setItem('currentUser', JSON.stringify({ id: 'admin', name: 'Admin', email: loginForm.email, role: 'admin' }))
+        login({ id: 'admin', name: 'Admin', email: loginForm.email, role: 'admin' })
         navigate('/admin')
       } else if (found) {
-        localStorage.setItem('currentUser', JSON.stringify({ ...found, role: 'user' }))
+        login({ ...found, role: 'user' })
         navigate('/dashboard')
       } else {
         setLoginError('Invalid email or password.')

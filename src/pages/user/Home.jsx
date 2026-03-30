@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './Home.css'
+import { useAuth } from '../../context/AuthContext'
 
 import heroImage from '../../assets/images/download (1).png'
 import doctor1 from '../../assets/images/download (2).png'
@@ -15,22 +16,23 @@ import service6 from '../../assets/images/service6.jpg'
 import mapBg from '../../assets/images/map.jpg'
 
 const specialists = [
-  { id:1, name: 'Dr. Jean Rill', title: 'Orthodontist', exp: '12+ years specializing in braces and aligner therapy for all ages.', image: doctor1 },
-  { id:2, name: 'Dr. Yoo Rii', title: 'Orthodontist', exp: '12+ years specializing in braces and aligner therapy for all ages.', image: doctor2 },
-  { id:3, name: 'Dr. Yeon Rill', title: 'Orthodontist', exp: '12+ years specializing in braces and aligner therapy for all ages.', image: doctor3 },
+  { id: 1, name: 'Dr. Jean Rill', title: 'Orthodontist', exp: '12+ years specializing in braces and aligner therapy for all ages.', image: doctor1 },
+  { id: 2, name: 'Dr. Yoo Rii',  title: 'Orthodontist', exp: '12+ years specializing in braces and aligner therapy for all ages.', image: doctor2 },
+  { id: 3, name: 'Dr. Yeon Rill', title: 'Orthodontist', exp: '12+ years specializing in braces and aligner therapy for all ages.', image: doctor3 },
 ]
 
 const services = [
   { name: 'Tooth Decay Treatment', desc: 'Fluoride treatments, Fillings, Crowns, Root canals, Tooth extractions.', img: service1 },
-  { name: 'Periodontal Disease', desc: 'Clean out bacteria and prevent bone & tissue destruction.', img: service2 },
-  { name: 'Pediatric Dentistry', desc: 'Special care for children, making first visits comfortable.', img: service3 },
-  { name: 'Preventive Dentistry', desc: 'Keep teeth healthy and avoid cavities, gum disease, enamel wear.', img: service4 },
-  { name: 'Dental Whitening', desc: 'Safe, painless whitening for outstanding results.', img: service5 },
-  { name: 'Dental Implants', desc: 'Artificial tooth root surgically placed to secure replacement teeth.', img: service6 },
+  { name: 'Periodontal Disease',   desc: 'Clean out bacteria and prevent bone & tissue destruction.', img: service2 },
+  { name: 'Pediatric Dentistry',   desc: 'Special care for children, making first visits comfortable.', img: service3 },
+  { name: 'Preventive Dentistry',  desc: 'Keep teeth healthy and avoid cavities, gum disease, enamel wear.', img: service4 },
+  { name: 'Dental Whitening',      desc: 'Safe, painless whitening for outstanding results.', img: service5 },
+  { name: 'Dental Implants',       desc: 'Artificial tooth root surgically placed to secure replacement teeth.', img: service6 },
 ]
 
 export default function Home() {
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [active, setActive] = useState('home')
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -43,32 +45,53 @@ export default function Home() {
     }
   }
 
+ 
+  const handleBooking = () => {
+    if (user) {
+      navigate('/book')
+    } else {
+      navigate('/login', {
+        state: { message: 'Please sign in first to book an appointment! 🦷' }
+      })
+    }
+  }
 
   return (
     <div className="home">
+
+      {/* Drawer overlay */}
       <div
-      className={`drawer-overlay ${menuOpen ? 'overlay-show' : ''}`}
-      onClick={() => setMenuOpen(false)}
-    />
+        className={`drawer-overlay ${menuOpen ? 'overlay-show' : ''}`}
+        onClick={() => setMenuOpen(false)}
+      />
+
+      {/* Mobile Drawer */}
       <div className={`drawer ${menuOpen ? 'drawer-open' : ''}`}>
-      <ul className="drawer-links">
-        <button className="drawer-btn" onClick={() => { scrollToSection('home');}}>
-          Home
-        </button>
-        <button className="drawer-btn" onClick={() => { scrollToSection('specialists'); }}>
-          About Us
-        </button>
-        <button className="drawer-btn" onClick={() => { scrollToSection('contact');  }}>
-          Contact Us
-        </button>
-        <button className="drawer-btn" onClick={() => { navigate('/book');  }}>
-          Book Appointment
-        </button>
-        <button className="drawer-btn" onClick={() => { navigate('/login'); }}>
-          Sign In
-        </button>
-      </ul>
-    </div>
+        <ul className="drawer-links">
+          <button className="drawer-btn" onClick={() => { scrollToSection('home') }}>
+            Home
+          </button>
+          <button className="drawer-btn" onClick={() => { scrollToSection('specialists') }}>
+            About Us
+          </button>
+          <button className="drawer-btn" onClick={() => { scrollToSection('contact') }}>
+            Contact Us
+          </button>
+          {/* ✅ Fixed — checks login */}
+          <button className="drawer-btn" onClick={handleBooking}>
+            Book Appointment
+          </button>
+          {user ? (
+            <button className="drawer-btn" onClick={() => navigate('/dashboard')}>
+              My Dashboard
+            </button>
+          ) : (
+            <button className="drawer-btn" onClick={() => navigate('/login')}>
+              Sign In
+            </button>
+          )}
+        </ul>
+      </div>
 
       {/* NAVBAR */}
       <nav className="navbar">
@@ -102,19 +125,25 @@ export default function Home() {
             </button>
           </li>
           <li>
-            <button className="btn-book" onClick={() => navigate('/book')}>
+            {/* ✅ Fixed — checks login */}
+            <button className="btn-book" onClick={handleBooking}>
               Book Appointment
             </button>
           </li>
-          
           <li>
-            <button className="btn-signin" onClick={() => navigate('/login')}>
-              Sign In
-            </button>
-          
+            
+            {user ? (
+              <button className="btn-signin" onClick={() => navigate('/dashboard')}>
+                My Dashboard
+              </button>
+            ) : (
+              <button className="btn-signin" onClick={() => navigate('/login')}>
+                Sign In
+              </button>
+            )}
           </li>
         </ul>
-          <button className="manu" onClick={() => setMenuOpen(!menuOpen)}>
+        <button className="manu" onClick={() => setMenuOpen(!menuOpen)}>
           ≡
         </button>
       </nav>
@@ -129,13 +158,17 @@ export default function Home() {
           <p className="hero-desc">
             Comprehensive dental and orthodontic care for the whole family. From routine checkups to advanced cosmetic treatments — we've got your smile covered.
           </p>
+          {/* ✅ Hero CTA also checks login */}
+          <button className="btn-book" onClick={handleBooking}>
+            Book Appointment
+          </button>
         </div>
-        <div className="hero-image" >
+        <div className="hero-image">
           <img src={heroImage} alt="Hero" />
         </div>
       </section>
 
-      {/* SPECIALISTS / ABOUT US */}
+      {/* SPECIALISTS */}
       <section className="specialists" id="specialists">
         <h2 className="section-title">Our <span className="highlight">Specialists</span></h2>
         <p className="section-sub">A dedicated team of caring professionals for treatments you can trust.</p>
@@ -147,14 +180,14 @@ export default function Home() {
               <p className="card-title">{s.title}</p>
               <p className="card-desc">{s.exp}</p>
               <button className="btn-view" onClick={() => navigate(`/doctor/${s.id}`)}>
-  View
-</button>
+                View
+              </button>
             </div>
           ))}
         </div>
       </section>
 
-      {/* SERVICES */}
+    
       <section className="services" id="services">
         <h2 className="section-title">Our <span className="highlight">Services</span></h2>
         <p className="section-sub">Expert treatments for every patient, from preventive care to smile transformations.</p>
@@ -164,7 +197,7 @@ export default function Home() {
               <div className="service-img-bg" style={{ backgroundImage: `url(${s.img})` }}></div>
               <div className="service-hover-overlay"></div>
               <div className="service-content">
-                <div className="service-icon-wrap">🦷</div>
+                <div className="service-icon-wrap">👩‍⚕️</div>
                 <div className="service-divider"></div>
                 <h3 className="service-name">{s.name}</h3>
                 <p className="service-desc">{s.desc}</p>
@@ -239,6 +272,7 @@ export default function Home() {
           <p>© 2025 Smile Dental Clinic. All rights reserved.</p>
         </div>
       </footer>
+
     </div>
   )
 }

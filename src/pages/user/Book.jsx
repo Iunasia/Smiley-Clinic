@@ -2,11 +2,14 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './Book.css'
 
+import doctor1 from '../../assets/images/download (2).png'
+import doctor2 from '../../assets/images/download (3).png'
+import doctor3 from '../../assets/images/download.png'
+
 const DENTISTS = [
-  { id: 1, name: 'Dr. Sarah Mitchell', specialty: 'General Dentistry', avatar: '👩‍⚕️' },
-  { id: 2, name: 'Dr. James Tan',      specialty: 'Orthodontics',       avatar: '👨‍⚕️' },
-  { id: 3, name: 'Dr. Anika Patel',   specialty: 'Cosmetic Dentistry', avatar: '👩‍⚕️' },
-  { id: 4, name: 'Dr. Leo Reyes',     specialty: 'Oral Surgery',       avatar: '👨‍⚕️' },
+  { id: 1, name: 'Dr. Yoo Rii',  title: 'Orthodontist',     exp: '12+ years specializing in braces and aligner therapy for all ages.', gender: 'Female', photo: doctor1 },
+  { id: 2, name: 'Dr. Jean Rill', title: 'General Dentist',  exp: '12+ years specializing in braces and aligner therapy for all ages.', gender: 'Male',   photo: doctor2 },
+  { id: 3, name: 'Dr. Yeon Rill', title: 'Cosmetic Dentist', exp: '12+ years specializing in braces and aligner therapy for all ages.', gender: 'Female', photo: doctor3 },
 ]
 
 const SERVICES = [
@@ -120,9 +123,9 @@ export default function Book() {
                   className={`book-dentist-card ${dentist?.id === d.id ? 'selected' : ''}`}
                   onClick={() => setDentist(d)}
                 >
-                  <div className="book-dentist-avatar">{d.avatar}</div>
+                  <img src={d.photo} alt={d.name} className="book-dentist-avatar" />
                   <p className="book-dentist-name">{d.name}</p>
-                  <p className="book-dentist-specialty">{d.specialty}</p>
+                  <p className="book-dentist-specialty">{d.title}</p>
                 </div>
               ))}
             </div>
@@ -183,13 +186,20 @@ export default function Book() {
           <>
             <p className="book-section-label">Review your Appointment</p>
             <div className="book-confirm-card">
+              {/* Doctor photo preview in confirm */}
+              <div className="book-confirm-doctor">
+                <img src={dentist?.photo} alt={dentist?.name} className="book-confirm-avatar" />
+                <div>
+                  <p className="book-confirm-doctor-name">{dentist?.name}</p>
+                  <p className="book-confirm-doctor-title">{dentist?.title}</p>
+                </div>
+              </div>
+              <div className="book-confirm-divider" />
               {[
-                { label: 'Dentist',   value: `${dentist?.avatar} ${dentist?.name}` },
-                { label: 'Specialty', value: dentist?.specialty },
-                { label: 'Service',   value: `${service?.icon} ${service?.label}` },
-                { label: 'Duration',  value: service?.duration },
-                { label: 'Date',      value: date },
-                { label: 'Time',      value: time },
+                { label: 'Service',  value: `${service?.icon} ${service?.label}` },
+                { label: 'Duration', value: service?.duration },
+                { label: 'Date',     value: date },
+                { label: 'Time',     value: time },
               ].map((row, i) => (
                 <div key={i} className="book-confirm-row">
                   <span className="book-confirm-label">{row.label}</span>

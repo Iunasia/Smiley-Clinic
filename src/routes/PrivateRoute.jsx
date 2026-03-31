@@ -6,3 +6,4 @@ export default function PrivateRoute() {
   if (!user) return <Navigate to="/login" replace />
   return <Outlet />
 }
+

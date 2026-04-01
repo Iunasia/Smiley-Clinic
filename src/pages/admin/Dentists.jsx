@@ -60,7 +60,7 @@ export default function Dentists() {
     }
     localStorage.setItem('dentists', JSON.stringify(updated))
     setDentists(updated)
-    setForm({ name: '', title: '', exp: '', gender: '', photo: '' })
+    setForm({ name: '', title: '', exp: '', gender: '', photo: '',about: '', education: '', specialties: '', schedule: '' })
     setPreview('')
     setEditing(null)
     setShowForm(false)
@@ -74,7 +74,9 @@ export default function Dentists() {
   }
 
   const startEdit = (d) => {
-    setForm({ name: d.name, title: d.title, exp: d.exp, gender: d.gender || '', photo: d.photo || '' })
+    setForm({ name: d.name, title: d.title, exp: d.exp, gender: d.gender || '', photo: d.photo || '',
+  about: d.about || '', education: d.education || '', specialties: d.specialties?.join(', ') || '', schedule: d.schedule || ''
+      })
     setPreview(d.photo || '')
     setEditing(d.id)
     setShowForm(true)
@@ -212,6 +214,17 @@ export default function Dentists() {
                       <input value={form.exp} onChange={e => setForm({ ...form, exp: e.target.value })} placeholder="12+ years"
                         style={{ width: '100%', background: '#f5f6fa', border: '1px solid #e0e0e0', borderRadius: 10, color: '#0d1b3e', padding: '11px 14px', fontSize: 14, outline: 'none', fontFamily: "'DM Sans', sans-serif" }} />
                     </div>
+                    <div>
+                      <label style={{ fontSize: 11, fontWeight: 600, color: '#8a9fc4', textTransform: 'uppercase', letterSpacing: 0.6, display: 'block', marginBottom: 6 }}>Education</label>
+                      <input value={form.education} onChange={e => setForm({ ...form, education: e.target.value })} placeholder="DDS – University Name, Year"
+                        style={{ width: '100%', background: '#f5f6fa', border: '1px solid #e0e0e0', borderRadius: 10, color: '#0d1b3e', padding: '11px 14px', fontSize: 14, outline: 'none', fontFamily: "'DM Sans', sans-serif" }} />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 11, fontWeight: 600, color: '#8a9fc4', textTransform: 'uppercase', letterSpacing: 0.6, display: 'block', marginBottom: 6 }}>Schedule</label>
+                      <input value={form.schedule} onChange={e => setForm({ ...form, schedule: e.target.value })} placeholder="Mon – Fri: 9AM – 5PM"
+                        style={{ width: '100%', background: '#f5f6fa', border: '1px solid #e0e0e0', borderRadius: 10, color: '#0d1b3e', padding: '11px 14px', fontSize: 14, outline: 'none', fontFamily: "'DM Sans', sans-serif" }} />
+                    </div>
+
                   </div>
                   <div>
                     <label style={{ fontSize: 11, fontWeight: 600, color: '#8a9fc4', textTransform: 'uppercase', letterSpacing: 0.6, display: 'block', marginBottom: 6 }}>About / Description</label>

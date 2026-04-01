@@ -4,9 +4,6 @@ import './Home.css'
 import { useAuth } from '../../context/AuthContext'
 
 import heroImage from '../../assets/images/download (1).png'
-import doctor1 from '../../assets/images/download (2).png'
-import doctor2 from '../../assets/images/download (3).png'
-import doctor3 from '../../assets/images/download.png'
 import service1 from '../../assets/images/service1.jpg'
 import service2 from '../../assets/images/service2.jpg'
 import service3 from '../../assets/images/service3.jpg'
@@ -15,11 +12,6 @@ import service5 from '../../assets/images/service5.jpg'
 import service6 from '../../assets/images/service6.jpg'
 import mapBg from '../../assets/images/map.jpg'
 
-const specialists = [
-  { id: 1, name: 'Dr. Jean Rill', title: 'Orthodontist', exp: '12+ years specializing in braces and aligner therapy for all ages.', image: doctor1 },
-  { id: 2, name: 'Dr. Yoo Rii',  title: 'Orthodontist', exp: '12+ years specializing in braces and aligner therapy for all ages.', image: doctor2 },
-  { id: 3, name: 'Dr. Yeon Rill', title: 'Orthodontist', exp: '12+ years specializing in braces and aligner therapy for all ages.', image: doctor3 },
-]
 
 const services = [
   { name: 'Tooth Decay Treatment', desc: 'Fluoride treatments, Fillings, Crowns, Root canals, Tooth extractions.', img: service1 },
@@ -35,8 +27,10 @@ export default function Home() {
   const { user } = useAuth()
   const [active, setActive] = useState('home')
   const [menuOpen, setMenuOpen] = useState(false)
-
-  const scrollToSection = (id) => {
+  const [specialists, setSpecialists] = useState(() => {
+    const stored = localStorage.getItem('dentists')
+    return stored ? JSON.parse(stored) : []})
+   const scrollToSection = (id) => {
     const section = document.getElementById(id)
     if (section) {
       section.scrollIntoView({ behavior: 'smooth' })
@@ -44,8 +38,6 @@ export default function Home() {
       setMenuOpen(false)
     }
   }
-
- 
   const handleBooking = () => {
     if (user) {
       navigate('/book')
@@ -175,7 +167,7 @@ export default function Home() {
         <div className="cards-grid">
           {specialists.map((s, i) => (
             <div className="specialist-card" key={i}>
-              <img src={s.image} alt={s.name} className="img" />
+              <img src={s.photo} alt={s.name} className="img" />
               <h3 className="card-name">{s.name}</h3>
               <p className="card-title">{s.title}</p>
               <p className="card-desc">{s.exp}</p>

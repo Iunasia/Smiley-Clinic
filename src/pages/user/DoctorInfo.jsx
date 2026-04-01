@@ -6,48 +6,21 @@ import doctor1 from '../../assets/images/download (2).png'
 import doctor2 from '../../assets/images/download (3).png'
 import doctor3 from '../../assets/images/download.png'
 
-const doctors = [
-  {
-    id: 1,
-    name: 'Dr. Jean Rill',
-    title: 'Orthodontist',
-    exp: '12+ years specializing in braces and aligner therapy for all ages.',
-    image: doctor1,
-    about: 'Dr. Jean Rill is a highly experienced orthodontist with over 12 years of practice. She is passionate about creating beautiful, healthy smiles for patients of all ages using the latest techniques and technology.',
-    education: 'DDS – University of Dental Medicine, 2008',
-    specialties: ['Braces', 'Clear Aligners', 'Retainers', 'Jaw Correction'],
-    languages: ['English', 'French'],
-    schedule: 'Mon – Fri: 9AM – 5PM',
-  },
-  {
-    id: 2,
-    name: 'Dr. Yoo Rii',
-    title: 'Orthodontist',
-    exp: '12+ years specializing in braces and aligner therapy for all ages.',
-    image: doctor2,
-    about: 'Dr. Yoo Rii brings 12 years of orthodontic expertise and a gentle approach to every patient. She is known for her precision and warm bedside manner.',
-    education: 'DDS – Seoul National University, 2009',
-    specialties: ['Braces', 'Invisalign', 'Pediatric Ortho', 'Smile Design'],
-    languages: ['English', 'Korean'],
-    schedule: 'Mon – Sat: 9AM – 6PM',
-  },
-  {
-    id: 3,
-    name: 'Dr. Yeon Rill',
-    title: 'Orthodontist',
-    exp: '12+ years specializing in braces and aligner therapy for all ages.',
-    image: doctor3,
-    about: 'Dr. Yeon Rill is dedicated to providing comprehensive orthodontic care with a focus on long-term results. Her 12+ years of experience make her one of the most trusted specialists at SMILLY.',
-    education: 'DDS – Yonsei University, 2007',
-    specialties: ['Lingual Braces', 'Clear Aligners', 'Adult Ortho', 'Retention'],
-    languages: ['English', 'Korean', 'Japanese'],
-    schedule: 'Tue – Sat: 10AM – 7PM',
-  },
-]
-
 export default function DoctorDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
+
+  //  Read from localStorage
+  const stored = JSON.parse(localStorage.getItem('dentists') || '[]')
+
+  //  Restore default images for the 3 default doctors
+  const doctors = stored.map(d => {
+    if (d.id === 1 && !d.photo?.startsWith('data:')) return { ...d, photo: doctor1 }
+    if (d.id === 2 && !d.photo?.startsWith('data:')) return { ...d, photo: doctor2 }
+    if (d.id === 3 && !d.photo?.startsWith('data:')) return { ...d, photo: doctor3 }
+    return d
+  })
+
   const doctor = doctors.find((d) => d.id === parseInt(id))
 
   if (!doctor) return <div className="not-found">Doctor not found.</div>
@@ -62,7 +35,7 @@ export default function DoctorDetail() {
 
       {/* PROFILE HEADER */}
       <div className="profile-header">
-        <img src={doctor.image} alt={doctor.name} className="profile-img" />
+        <img src={doctor.photo} alt={doctor.name} className="profile-img" />
         <div className="profile-info">
           <h1 className="profile-name">{doctor.name}</h1>
           <p className="profile-title">{doctor.title}</p>
@@ -75,26 +48,30 @@ export default function DoctorDetail() {
 
         <div className="detail-card">
           <h3>About</h3>
-          <p>{doctor.about}</p>
+          <p>{doctor.about || 'No information provided.'}</p>
         </div>
 
         <div className="detail-card">
           <h3>Education</h3>
-          <p>{doctor.education}</p>
+          <p>{doctor.education || 'No information provided.'}</p>
         </div>
 
         <div className="detail-card">
           <h3>Specialties</h3>
-          <ul>
-            {doctor.specialties.map((s, i) => (
-              <li key={i}>🦷 {s}</li>
-            ))}
-          </ul>
+          {doctor.specialties?.length > 0 ? (
+            <ul>
+              {doctor.specialties.map((s, i) => (
+                <li key={i}>🦷 {s}</li>
+              ))}
+            </ul>
+          ) : (
+            <p>No specialties listed.</p>
+          )}
         </div>
 
         <div className="detail-card">
           <h3>Schedule</h3>
-          <p>🕐 {doctor.schedule}</p>
+          <p>🕐 {doctor.schedule || 'No schedule available.'}</p>
         </div>
 
       </div>

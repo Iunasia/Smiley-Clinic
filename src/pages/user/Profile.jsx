@@ -10,30 +10,29 @@ export default function Profile() {
   const [saved, setSaved] = useState(false)
 
   const [form, setForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    dob: '',
-    gender: '',
-    address: '',
+    name:      '',
+    email:     '',
+    phone:     '',
+    dob:       '',
+    gender:    '',
+    address:   '',
     emergency: '',
     bloodType: '',
     allergies: '',
   })
 
   useEffect(() => {
-    // Load saved profile, fall back to logged-in user info
-    const saved = JSON.parse(localStorage.getItem('userProfile') || '{}')
+    const storedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}')
     setForm({
-      name:      saved.name      || user?.name  || '',
-      email:     saved.email     || user?.email || '',
-      phone:     saved.phone     || '',
-      dob:       saved.dob       || '',
-      gender:    saved.gender    || '',
-      address:   saved.address   || '',
-      emergency: saved.emergency || '',
-      bloodType: saved.bloodType || '',
-      allergies: saved.allergies || '',
+      name:      storedProfile.name      || user?.name  || '',
+      email:     storedProfile.email     || user?.email || '',
+      phone:     storedProfile.phone     || '',
+      dob:       storedProfile.dob       || '',
+      gender:    storedProfile.gender    || '',
+      address:   storedProfile.address   || '',
+      emergency: storedProfile.emergency || '',
+      bloodType: storedProfile.bloodType || '',
+      allergies: storedProfile.allergies || '',
     })
   }, [user])
 
@@ -49,17 +48,17 @@ export default function Profile() {
   }
 
   const handleCancel = () => {
-    const saved = JSON.parse(localStorage.getItem('userProfile') || '{}')
+    const storedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}')
     setForm({
-      name:      saved.name      || user?.name  || '',
-      email:     saved.email     || user?.email || '',
-      phone:     saved.phone     || '',
-      dob:       saved.dob       || '',
-      gender:    saved.gender    || '',
-      address:   saved.address   || '',
-      emergency: saved.emergency || '',
-      bloodType: saved.bloodType || '',
-      allergies: saved.allergies || '',
+      name:      storedProfile.name      || user?.name  || '',
+      email:     storedProfile.email     || user?.email || '',
+      phone:     storedProfile.phone     || '',
+      dob:       storedProfile.dob       || '',
+      gender:    storedProfile.gender    || '',
+      address:   storedProfile.address   || '',
+      emergency: storedProfile.emergency || '',
+      bloodType: storedProfile.bloodType || '',
+      allergies: storedProfile.allergies || '',
     })
     setEditing(false)
   }

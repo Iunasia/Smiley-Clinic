@@ -57,9 +57,9 @@ export default function Book() {
   const canNext = [!!dentist, !!service, !!date && !!time, true][step]
 
   const isAvailable = (t) => {
-    if (!dentist || !date) return false
-    return allSlots.some(s => s.dentistId === dentist.id && s.date === date && s.time === t)
-  }
+  if (!dentist || !date) return false
+  return !isBooked(t)
+}
 
   const isBooked = (t) => {
     if (!dentist || !date) return false

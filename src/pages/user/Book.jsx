@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 import './Book.css'
 
 const SERVICES = [
@@ -19,10 +20,18 @@ const ALL_TIME_SLOTS = [
   '05:00 PM','05:30 PM',
 ]
 
+const DEFAULT_DENTISTS = [
+  { id: 1, name: 'Dr. Yoo Rii',   title: 'Orthodontist' },
+  { id: 2, name: 'Dr. Jean Rill', title: 'General Dentist' },
+  { id: 3, name: 'Dr. Yeon Rill', title: 'Cosmetic Dentist' },
+]
+
 const STEPS = ['Dentist', 'Service', 'Date & Time', 'Confirm']
 
 export default function Book() {
   const navigate = useNavigate()
+  const { user } = useAuth()
+
   const [step, setStep]               = useState(0)
   const [dentists, setDentists]       = useState([])
   const [dentist, setDentist]         = useState(null)
@@ -37,7 +46,7 @@ export default function Book() {
     const savedDentists = JSON.parse(localStorage.getItem('dentists') || '[]')
     const savedSlots    = JSON.parse(localStorage.getItem('slots')    || '[]')
     const savedBookings = JSON.parse(localStorage.getItem('bookings') || '[]')
-    setDentists(savedDentists)
+    setDentists(savedDentists.length > 0 ? savedDentists : DEFAULT_DENTISTS)
     setAllSlots(savedSlots)
     setAllBookings(savedBookings)
   }, [])
@@ -55,7 +64,7 @@ export default function Book() {
   const isBooked = (t) => {
     if (!dentist || !date) return false
     return allBookings.some(
-      b => b.dentistId === dentist.id && b.date === date && b.time === t && b.status !== 'cancelled'
+      b => b.dentistId === dentist.id && b.date === date && b.time === t && b.status !== 'Cancelled'
     )
   }
 
@@ -69,14 +78,18 @@ export default function Book() {
 
   const handleSubmit = () => {
     const appointment = {
+      id:           Date.now(),
       dentistId:    dentist.id,
+      dentistName:  dentist.name,
       doctorName:   dentist.name,
       dentistTitle: dentist.title || '',
       service:      service.label,
       date,
       time,
-      status: 'pending',
-      id: Date.now(),
+      status:       'Confirmed',
+      userName:     user?.name  || '',
+      userEmail:    user?.email || '',
+      email:        user?.email || '',
     }
     const existing = JSON.parse(localStorage.getItem('bookings') || '[]')
     localStorage.setItem('bookings', JSON.stringify([appointment, ...existing]))
@@ -153,7 +166,6 @@ export default function Book() {
                     className={`book-dentist-card ${dentist?.id === d.id ? 'selected' : ''}`}
                     onClick={() => setDentist(d)}
                   >
-                    {/* Wrapper controls the crop — photo stays top-aligned */}
                     <div className="book-dentist-avatar-wrap">
                       {d.photo ? (
                         <img
@@ -285,14 +297,18 @@ export default function Book() {
               </div>
               <div className="book-confirm-divider" />
               {[
+                { label: 'Patient',  value: user?.name || 'You' },
                 { label: 'Service',  value: `${service?.icon} ${service?.label}` },
                 { label: 'Duration', value: service?.duration },
                 { label: 'Date',     value: date },
                 { label: 'Time',     value: time },
+                { label: 'Status',   value: 'Confirmed' },
               ].map((row, i) => (
                 <div key={i} className="book-confirm-row">
                   <span className="book-confirm-label">{row.label}</span>
-                  <span className="book-confirm-value">{row.value}</span>
+                  <span className={`book-confirm-value ${row.label === 'Status' ? 'book-confirm-status' : ''}`}>
+                    {row.value}
+                  </span>
                 </div>
               ))}
             </div>

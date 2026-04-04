@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 export default function Appointments() {
   const navigate = useNavigate()
   const [bookings, setBookings] = useState([])
-  const [filter, setFilter]     = useState('all')
+  const [filter, setFilter]     = useState('All')
   const [search, setSearch]     = useState('')
 
   const loadData = () => {
@@ -23,14 +23,19 @@ export default function Appointments() {
     setBookings(updated)
   }
 
+  // ✅ FIX: All status checks now use Capital letters
   const filtered = bookings
-    .filter(b => filter === 'all' || b.status === filter)
+    .filter(b => filter === 'All' || b.status === filter)
     .filter(b =>
       b.userName?.toLowerCase().includes(search.toLowerCase()) ||
       b.dentistName?.toLowerCase().includes(search.toLowerCase())
     )
 
-  const statusColor = { pending: '#f5c842', confirmed: '#4ecdc4', cancelled: '#ff6b6b' }
+  const statusColor = {
+    Pending:   '#f5c842',
+    Confirmed: '#4ecdc4',
+    Cancelled: '#ff6b6b',
+  }
 
   const sidebarItems = [
     { label: 'Dashboard',   path: '/admin'              },
@@ -41,11 +46,12 @@ export default function Appointments() {
     { label: 'Setting',     path: '/admin/reports'      },
   ]
 
+  // ✅ FIX: Stats now use Capital letters
   const stats = {
     total:     bookings.length,
-    pending:   bookings.filter(b => b.status === 'pending').length,
-    confirmed: bookings.filter(b => b.status === 'confirmed').length,
-    cancelled: bookings.filter(b => b.status === 'cancelled').length,
+    pending:   bookings.filter(b => b.status === 'Pending').length,
+    confirmed: bookings.filter(b => b.status === 'Confirmed').length,
+    cancelled: bookings.filter(b => b.status === 'Cancelled').length,
   }
 
   return (
@@ -142,8 +148,9 @@ export default function Appointments() {
                 style={{ background: 'none', border: 'none', outline: 'none', fontSize: 13, color: '#0d1b3e', width: '100%', fontFamily: "'DM Sans', sans-serif" }}
               />
             </div>
+            {/* ✅ FIX: Filter tabs now use Capital letters */}
             <div style={{ display: 'flex', background: '#fff', border: '1px solid #e0e4ea', borderRadius: 10, padding: 4, gap: 4 }}>
-              {['all', 'pending', 'confirmed', 'cancelled'].map(f => (
+              {['All', 'Pending', 'Confirmed', 'Cancelled'].map(f => (
                 <button key={f} onClick={() => setFilter(f)}
                   style={{ padding: '7px 16px', borderRadius: 8, border: 'none', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", textTransform: 'capitalize', transition: 'all 0.2s',
                     background: filter === f ? '#0d1b3e' : 'transparent',
@@ -168,7 +175,7 @@ export default function Appointments() {
                 {filtered.length === 0 ? (
                   <tr>
                     <td colSpan={7} style={{ padding: 48, textAlign: 'center', color: '#8a9fc4', fontSize: 14 }}>
-                      {search || filter !== 'all' ? 'No results found' : 'No appointments yet'}
+                      {search || filter !== 'All' ? 'No results found' : 'No appointments yet'}
                     </td>
                   </tr>
                 ) : filtered.map((b, i) => (
@@ -194,32 +201,33 @@ export default function Appointments() {
                     <td style={{ padding: '13px 16px', fontSize: 13, color: '#666' }}>{b.date}</td>
                     <td style={{ padding: '13px 16px', fontSize: 13, color: '#666' }}>{b.time}</td>
                     <td style={{ padding: '13px 16px' }}>
-                      <span style={{ padding: '4px 12px', borderRadius: 99, border: `1px solid ${statusColor[b.status]}`, color: statusColor[b.status], fontSize: 11, fontWeight: 600, textTransform: 'capitalize' }}>
+                      <span style={{ padding: '4px 12px', borderRadius: 99, border: `1px solid ${statusColor[b.status] || '#8a9fc4'}`, color: statusColor[b.status] || '#8a9fc4', fontSize: 11, fontWeight: 600 }}>
                         {b.status}
                       </span>
                     </td>
+                    {/* ✅ FIX: Action buttons now use Capital letters */}
                     <td style={{ padding: '13px 16px' }}>
                       <div style={{ display: 'flex', gap: 6 }}>
-                        {b.status === 'pending' && (
-                          <button onClick={() => updateStatus(b.id, 'confirmed')}
+                        {b.status === 'Pending' && (
+                          <button onClick={() => updateStatus(b.id, 'Confirmed')}
                             style={{ background: 'rgba(78,205,196,0.1)', border: '1px solid #4ecdc4', color: '#4ecdc4', padding: '5px 12px', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>
-                            Confirm
+                            Confirm ✓
                           </button>
                         )}
-                        {b.status === 'confirmed' && (
-                          <button onClick={() => updateStatus(b.id, 'pending')}
+                        {b.status === 'Confirmed' && (
+                          <button onClick={() => updateStatus(b.id, 'Pending')}
                             style={{ background: 'rgba(245,200,66,0.1)', border: '1px solid #f5c842', color: '#f5c842', padding: '5px 12px', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>
                             Pending
                           </button>
                         )}
-                        {b.status !== 'cancelled' && (
-                          <button onClick={() => updateStatus(b.id, 'cancelled')}
+                        {b.status !== 'Cancelled' && (
+                          <button onClick={() => updateStatus(b.id, 'Cancelled')}
                             style={{ background: 'rgba(255,107,107,0.08)', border: '1px solid rgba(255,107,107,0.3)', color: '#ff6b6b', padding: '5px 12px', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>
                             Cancel
                           </button>
                         )}
-                        {b.status === 'cancelled' && (
-                          <button onClick={() => updateStatus(b.id, 'pending')}
+                        {b.status === 'Cancelled' && (
+                          <button onClick={() => updateStatus(b.id, 'Pending')}
                             style={{ background: '#f8f9fc', border: '1px solid #e0e4ea', color: '#666', padding: '5px 12px', borderRadius: 6, fontSize: 12, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>
                             Restore
                           </button>
@@ -251,7 +259,6 @@ export default function Appointments() {
               </div>
             )}
           </div>
-
         </div>
       </div>
     </div>

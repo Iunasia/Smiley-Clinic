@@ -7,23 +7,25 @@ import doctor3 from '../../assets/images/download.png'
 export default function Dentists() {
   const navigate = useNavigate()
   const [dentists, setDentists] = useState([])
-  const [form, setForm] = useState({ name: '', title: '', exp: '', gender: '', photo: '' })
+  const [form, setForm] = useState({
+    name: '', title: '', exp: '', gender: '', photo: '',
+    about: '', education: '', specialties: '', schedule: ''
+  })
   const [editing, setEditing] = useState(null)
   const [showForm, setShowForm] = useState(false)
   const [preview, setPreview] = useState('')
 
   useEffect(() => {
     const defaults = [
-      { id: 1, name: 'Dr. Yoo Rii',   title: 'Orthodontist',     exp: '12+ years specializing in braces and aligner therapy for all ages.', gender: 'Female', photo: doctor1 },
-      { id: 2, name: 'Dr. Jean Rill',  title: 'General Dentist',  exp: '12+ years specializing in braces and aligner therapy for all ages.', gender: 'Male',   photo: doctor2 },
-      { id: 3, name: 'Dr. Yeon Rill',  title: 'Cosmetic Dentist', exp: '12+ years specializing in braces and aligner therapy for all ages.', gender: 'Female', photo: doctor3 },
+      { id: 1, name: 'Dr. Yoo Rii',  title: 'Orthodontist',     exp: '12+ years specializing in braces and aligner therapy for all ages.', gender: 'Female', photo: doctor1, about: '', education: '', specialties: [], schedule: '' },
+      { id: 2, name: 'Dr. Jean Rill', title: 'General Dentist',  exp: '12+ years specializing in braces and aligner therapy for all ages.', gender: 'Male',   photo: doctor2, about: '', education: '', specialties: [], schedule: '' },
+      { id: 3, name: 'Dr. Yeon Rill', title: 'Cosmetic Dentist', exp: '12+ years specializing in braces and aligner therapy for all ages.', gender: 'Female', photo: doctor3, about: '', education: '', specialties: [], schedule: '' },
     ]
     const saved = JSON.parse(localStorage.getItem('dentists') || '[]')
     if (saved.length === 0) {
       localStorage.setItem('dentists', JSON.stringify(defaults))
       setDentists(defaults)
     } else {
-      // keep uploaded photos but restore imported images for default doctors
       const merged = saved.map(d => {
         if (d.id === 1 && !d.photo?.startsWith('data:')) return { ...d, photo: doctor1 }
         if (d.id === 2 && !d.photo?.startsWith('data:')) return { ...d, photo: doctor2 }
@@ -50,20 +52,26 @@ export default function Dentists() {
     return doctor1
   }
 
+  // ✅ FIX: Convert specialties string to array before saving
   const save = () => {
     if (!form.name || !form.title) return
+
+    const specialtiesArray = form.specialties
+      ? form.specialties.split(',').map(s => s.trim()).filter(Boolean)
+      : []
+
+    const formToSave = { ...form, specialties: specialtiesArray }
+
     let updated
     if (editing !== null) {
-      updated = dentists.map(d => d.id === editing ? { ...d, ...form } : d)
+      updated = dentists.map(d => d.id === editing ? { ...d, ...formToSave } : d)
     } else {
-      updated = [...dentists, { id: Date.now(), ...form }]
+      updated = [...dentists, { id: Date.now(), ...formToSave }]
     }
+
     localStorage.setItem('dentists', JSON.stringify(updated))
     setDentists(updated)
-    setForm({ name: '', title: '', exp: '', gender: '', photo: '',about: '', education: '', specialties: '', schedule: '' })
-    setPreview('')
-    setEditing(null)
-    setShowForm(false)
+    resetForm()
   }
 
   const deleteDentist = (id) => {
@@ -74,19 +82,32 @@ export default function Dentists() {
   }
 
   const startEdit = (d) => {
-    setForm({ name: d.name, title: d.title, exp: d.exp, gender: d.gender || '', photo: d.photo || '',
-  about: d.about || '', education: d.education || '', specialties: d.specialties?.join(', ') || '', schedule: d.schedule || ''
-      })
+    setForm({
+      name: d.name,
+      title: d.title,
+      exp: d.exp,
+      gender: d.gender || '',
+      photo: d.photo || '',
+      // ✅ FIX: Convert specialties array back to string for editing
+      about: d.about || '',
+      education: d.education || '',
+      specialties: Array.isArray(d.specialties) ? d.specialties.join(', ') : (d.specialties || ''),
+      schedule: d.schedule || ''
+    })
     setPreview(d.photo || '')
     setEditing(d.id)
     setShowForm(true)
     window.scrollTo(0, 0)
   }
 
+  // ✅ FIX: resetForm now includes all fields
   const resetForm = () => {
     setShowForm(false)
     setEditing(null)
-    setForm({ name: '', title: '', exp: '', gender: '', photo: '' })
+    setForm({
+      name: '', title: '', exp: '', gender: '', photo: '',
+      about: '', education: '', specialties: '', schedule: ''
+    })
     setPreview('')
   }
 
@@ -224,13 +245,21 @@ export default function Dentists() {
                       <input value={form.schedule} onChange={e => setForm({ ...form, schedule: e.target.value })} placeholder="Mon – Fri: 9AM – 5PM"
                         style={{ width: '100%', background: '#f5f6fa', border: '1px solid #e0e0e0', borderRadius: 10, color: '#0d1b3e', padding: '11px 14px', fontSize: 14, outline: 'none', fontFamily: "'DM Sans', sans-serif" }} />
                     </div>
-
                   </div>
+
+                  <div>
+                    <label style={{ fontSize: 11, fontWeight: 600, color: '#8a9fc4', textTransform: 'uppercase', letterSpacing: 0.6, display: 'block', marginBottom: 6 }}>Specialties (comma separated)</label>
+                    <input value={form.specialties} onChange={e => setForm({ ...form, specialties: e.target.value })} placeholder="Braces, Aligners, Whitening"
+                      style={{ width: '100%', background: '#f5f6fa', border: '1px solid #e0e0e0', borderRadius: 10, color: '#0d1b3e', padding: '11px 14px', fontSize: 14, outline: 'none', fontFamily: "'DM Sans', sans-serif" }} />
+                  </div>
+
+                  {/* ✅ FIX: About now correctly uses form.about */}
                   <div>
                     <label style={{ fontSize: 11, fontWeight: 600, color: '#8a9fc4', textTransform: 'uppercase', letterSpacing: 0.6, display: 'block', marginBottom: 6 }}>About / Description</label>
-                    <textarea value={form.exp} onChange={e => setForm({ ...form, exp: e.target.value })} placeholder="Specializing in braces and aligner therapy..." rows={3}
+                    <textarea value={form.about} onChange={e => setForm({ ...form, about: e.target.value })} placeholder="Specializing in braces and aligner therapy..." rows={3}
                       style={{ width: '100%', background: '#f5f6fa', border: '1px solid #e0e0e0', borderRadius: 10, color: '#0d1b3e', padding: '11px 14px', fontSize: 14, outline: 'none', fontFamily: "'DM Sans', sans-serif", resize: 'vertical' }} />
                   </div>
+
                   <div style={{ display: 'flex', gap: 10, paddingTop: 4 }}>
                     <button onClick={save}
                       style={{ background: '#0d1b3e', border: 'none', color: '#fff', padding: '11px 28px', borderRadius: 10, fontWeight: 700, fontSize: 14, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>

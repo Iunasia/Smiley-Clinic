@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'  // ✅ FIX: Import useAuth
 import './MyBookings.css'
 
 const STATUS_COLORS = {
@@ -11,21 +12,26 @@ const STATUS_COLORS = {
 export default function MyBookings() {
   const navigate = useNavigate()
   const location = useLocation()
+  const { user } = useAuth()  // ✅ FIX: Get current logged in user
 
   // Accept a new booking passed from Book.jsx via navigate state
   const incoming = location.state?.appointment
 
   const [bookings, setBookings] = useState(() => {
-    const saved = JSON.parse(localStorage.getItem('bookings') || '[]')
+    const all = JSON.parse(localStorage.getItem('bookings') || '[]')
+
+    // ✅ FIX: Filter only current user's bookings
+    const saved = all.filter(b => b.email === user?.email)
+
     if (incoming) {
       const exists = saved.find(
         (b) => b.date === incoming.date && b.time === incoming.time && b.doctorName === incoming.doctorName
       )
       if (!exists) {
         const newBooking = { ...incoming, id: Date.now(), status: 'Confirmed' }
-        const updated = [newBooking, ...saved]
-        localStorage.setItem('bookings', JSON.stringify(updated))
-        return updated
+        const updatedAll = [newBooking, ...all]
+        localStorage.setItem('bookings', JSON.stringify(updatedAll))
+        return [newBooking, ...saved]
       }
     }
     return saved
@@ -34,11 +40,16 @@ export default function MyBookings() {
   const [filter, setFilter] = useState('All')
 
   const handleCancel = (id) => {
-    const updated = bookings.map((b) =>
+    // ✅ FIX: Update only in local state
+    const updatedLocal = bookings.map((b) =>
       b.id === id ? { ...b, status: 'Cancelled' } : b
     )
-    setBookings(updated)
-    localStorage.setItem('bookings', JSON.stringify(updated))
+    setBookings(updatedLocal)
+
+    // ✅ FIX: Merge with ALL bookings (other users stay untouched)
+    const all = JSON.parse(localStorage.getItem('bookings') || '[]')
+    const merged = all.map(b => b.id === id ? { ...b, status: 'Cancelled' } : b)
+    localStorage.setItem('bookings', JSON.stringify(merged))
   }
 
   const filtered = filter === 'All' ? bookings : bookings.filter((b) => b.status === filter)

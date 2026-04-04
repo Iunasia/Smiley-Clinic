@@ -77,20 +77,20 @@ export default function Book() {
   const hasAnyAvailable = date && ALL_TIME_SLOTS.some(t => isAvailable(t))
 
   const handleSubmit = () => {
-    const appointment = {
-      id:           Date.now(),
-      dentistId:    dentist.id,
-      dentistName:  dentist.name,
-      doctorName:   dentist.name,
-      dentistTitle: dentist.title || '',
-      service:      service.label,
-      date,
-      time,
-      status:       'Confirmed',
-      userName:     user?.name  || '',
-      userEmail:    user?.email || '',
-      email:        user?.email || '',
-    }
+   const appointment = {
+  id:           Date.now(),
+  dentistId:    dentist.id,
+  dentistName:  dentist.name,
+  doctorName:   dentist.name,
+  dentistTitle: dentist.title || '',
+  service:      service.label,
+  date,
+  time,
+  status:       'Pending',  
+  userName:     user?.name  || '',
+  userEmail:    user?.email || '',
+  email:        user?.email || '',
+}
     const existing = JSON.parse(localStorage.getItem('bookings') || '[]')
     localStorage.setItem('bookings', JSON.stringify([appointment, ...existing]))
     setSubmitted(true)

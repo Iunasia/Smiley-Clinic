@@ -1,4 +1,3 @@
-import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import './DoctorInfo.css'
 
@@ -10,10 +9,8 @@ export default function DoctorDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
 
-  //  Read from localStorage
   const stored = JSON.parse(localStorage.getItem('dentists') || '[]')
 
-  //  Restore default images for the 3 default doctors
   const doctors = stored.map(d => {
     if (d.id === 1 && !d.photo?.startsWith('data:')) return { ...d, photo: doctor1 }
     if (d.id === 2 && !d.photo?.startsWith('data:')) return { ...d, photo: doctor2 }
@@ -21,9 +18,17 @@ export default function DoctorDetail() {
     return d
   })
 
-  const doctor = doctors.find((d) => d.id === parseInt(id))
+  // ✅ FIX 1: use String() instead of parseInt() so Date.now() ids work too
+  const doctor = doctors.find(d => String(d.id) === String(id))
 
   if (!doctor) return <div className="not-found">Doctor not found.</div>
+
+  // ✅ FIX 2: handle specialties as either array or comma-string
+  const specialties = Array.isArray(doctor.specialties)
+    ? doctor.specialties
+    : typeof doctor.specialties === 'string' && doctor.specialties
+      ? doctor.specialties.split(',').map(s => s.trim()).filter(Boolean)
+      : []
 
   return (
     <div className="doctor-detail">
@@ -58,9 +63,9 @@ export default function DoctorDetail() {
 
         <div className="detail-card">
           <h3>Specialties</h3>
-          {doctor.specialties?.length > 0 ? (
+          {specialties.length > 0 ? (
             <ul>
-              {doctor.specialties.map((s, i) => (
+              {specialties.map((s, i) => (
                 <li key={i}>🦷 {s}</li>
               ))}
             </ul>

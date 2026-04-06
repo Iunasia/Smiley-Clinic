@@ -69,7 +69,6 @@ export default function Home() {
           <button className="drawer-btn" onClick={() => { scrollToSection('contact') }}>
             Contact Us
           </button>
-          {/* ✅ Fixed — checks login */}
           <button className="drawer-btn" onClick={handleBooking}>
             Book Appointment
           </button>

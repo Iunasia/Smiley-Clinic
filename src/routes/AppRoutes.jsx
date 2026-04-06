@@ -57,3 +57,4 @@ export default function AppRoutes() {
     </Routes>
   )
 }
+// there  are  3  route  here  1  is  admin ssecond  is  private  and  third  is  public 
